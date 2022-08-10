@@ -1,0 +1,11 @@
+
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rede-social
+    username: postgres
+    password: yedda
+  jpa:
+    hibernate:
+      ddl-auto: update
