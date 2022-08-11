@@ -1,5 +1,8 @@
 package br.edu.ifpi.ads.redesocial.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,9 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
