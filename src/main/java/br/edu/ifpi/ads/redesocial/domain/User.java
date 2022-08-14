@@ -2,6 +2,7 @@ package br.edu.ifpi.ads.redesocial.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
@@ -24,6 +26,7 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    private String name;
     private String authorities;
 
     @Override
