@@ -1,5 +1,6 @@
 package br.edu.ifpi.ads.redesocial.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    @Schema(example = "Pedro Henrique")
     private String name;
     private String authorities;
 
