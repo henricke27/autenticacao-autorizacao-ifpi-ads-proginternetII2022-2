@@ -27,6 +27,7 @@ public class SignupService {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
         User user = User.builder()
+                .name(userDto.getName())
                 .username(userDto.getUsername())
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .authorities("ROLE_USER")

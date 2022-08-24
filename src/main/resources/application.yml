@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/rede-social
+    url: jdbc:postgresql://localhost:5432/rede_social
     username: postgres
-    password: yedda
+    password: 12345
   jpa:
     hibernate:
       ddl-auto: update
