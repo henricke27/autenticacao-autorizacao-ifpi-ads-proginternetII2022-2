@@ -31,6 +31,8 @@ public class User implements UserDetails {
     private String name;
     private String authorities;
 
+    private String refreshToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = Arrays.stream(authorities.split(","))

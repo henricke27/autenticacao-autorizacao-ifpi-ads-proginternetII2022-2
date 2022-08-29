@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -32,14 +33,13 @@ public class JWTValidationFilter extends BasicAuthenticationFilter {
 
         String token = header.replace("Bearer ", "");
 
-        log.info(token);
-
+        log.info("Token {}", token);
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(token));
+        log.info("Authentication from SecurityContextHolder: {}", SecurityContextHolder.getContext().getAuthentication());
         chain.doFilter(request, response);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(String token){
-
         String subject = JWT.require(Algorithm.HMAC256("secret".getBytes()))
                 .build()
                 .verify(token)
@@ -48,6 +48,8 @@ public class JWTValidationFilter extends BasicAuthenticationFilter {
         if(subject == null){
             return null;
         }
+
+        //User.withUsername(subject);
 
         return new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
     }

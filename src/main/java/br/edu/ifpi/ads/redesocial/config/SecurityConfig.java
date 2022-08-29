@@ -2,6 +2,7 @@ package br.edu.ifpi.ads.redesocial.config;
 
 import br.edu.ifpi.ads.redesocial.filter.JWTAuthenticationFilter;
 import br.edu.ifpi.ads.redesocial.filter.JWTValidationFilter;
+import br.edu.ifpi.ads.redesocial.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
@@ -31,12 +32,11 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/signup").permitAll()
+                .antMatchers("/signin", "/signup", "/refresh").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager, userService))
                 .addFilter(new JWTValidationFilter(authenticationManager))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -48,7 +48,7 @@ public class SecurityConfig {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
         AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        managerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+        managerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder);
 
         return managerBuilder.build();
     }
