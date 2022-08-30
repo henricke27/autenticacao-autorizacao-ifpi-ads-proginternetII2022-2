@@ -13,5 +13,5 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ChangePasswordWrapper {
     @Size(min = 5, max = 50)
-    private String newPassword;
+    private String password;
 }

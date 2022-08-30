@@ -10,21 +10,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.security.sasl.AuthorizeCallback;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -32,7 +29,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -96,7 +92,7 @@ public class UserController {
 
             String newAccessToken = JWT.create()
                     .withSubject(subject)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 3 * 60 * 1000))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                     .sign(Algorithm.HMAC256("secret".getBytes()));
 
             return new ResponseEntity<Map<String, String>>(
@@ -108,8 +104,9 @@ public class UserController {
     }
 
     @PostMapping("/change/password")
-    public void changePassword(Authentication request, @RequestBody @Valid ChangePasswordWrapper changePasswordWrapper) throws IOException {
-        //...
+    public ResponseEntity<Void> changePassword(HttpServletRequest request ,@RequestBody @Valid ChangePasswordWrapper changePasswordWrapper) {
+        userService.changePassword(request, changePasswordWrapper);
+        return ResponseEntity.noContent().build();
     }
 
 }
