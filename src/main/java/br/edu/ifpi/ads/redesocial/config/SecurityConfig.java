@@ -12,11 +12,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.filter.CorsFilter;
 
 @Log4j2
 @Configuration
@@ -33,7 +32,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests()
-                .antMatchers("/signin", "/signup", "/refresh").permitAll()
+                .antMatchers("/signin", "/signup").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

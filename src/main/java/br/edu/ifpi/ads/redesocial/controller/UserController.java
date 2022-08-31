@@ -2,6 +2,7 @@ package br.edu.ifpi.ads.redesocial.controller;
 
 import br.edu.ifpi.ads.redesocial.domain.User;
 import br.edu.ifpi.ads.redesocial.dto.ChangePasswordWrapper;
+import br.edu.ifpi.ads.redesocial.filter.JWTUtil;
 import br.edu.ifpi.ads.redesocial.service.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -61,10 +62,17 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<String> whoami(HttpServletRequest httpServletRequest) {
-        String username = httpServletRequest.getUserPrincipal().getName();
-        User user = userService.findByUsername(username);
-        return new ResponseEntity<>(user.getName(), HttpStatus.OK);
+    public ResponseEntity<String> whoami(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(JWTUtil.HEADER);
+        String token = authorizationHeader.replace(JWTUtil.TYPE, "");
+
+        String name = JWT.require(JWTUtil.SIGN)
+                .build()
+                .verify(token)
+                .getClaim("name")
+                .asString();
+
+        return new ResponseEntity<>(name, HttpStatus.OK);
     }
 
     @GetMapping("/data")
@@ -73,34 +81,9 @@ public class UserController {
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<Map<String, String>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        try{
-            String authorizationHeader = request.getHeader("Authorization");
-            String refreshToken = authorizationHeader.replace("Bearer ", "");
-
-            DecodedJWT verify = JWT.require(Algorithm.HMAC256("secret".getBytes()))
-                    .build()
-                    .verify(refreshToken);
-
-            String subject = verify.getSubject();
-
-            User user = userService.findByUsername(subject);
-
-            if(!user.getRefreshToken().equals(refreshToken)){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "token revogado!");
-            }
-
-            String newAccessToken = JWT.create()
-                    .withSubject(subject)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                    .sign(Algorithm.HMAC256("secret".getBytes()));
-
-            return new ResponseEntity<Map<String, String>>(
-                    Map.of("access-token", newAccessToken), HttpStatus.OK);
-
-        }catch(Exception exception){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-        }
+    public ResponseEntity<Map<String, String>> refreshToken(HttpServletRequest request) {
+        return new ResponseEntity<Map<String, String>>(
+                Map.of("access-token", userService.refresh(request)), HttpStatus.OK);
     }
 
     @PostMapping("/change/password")
